@@ -1,17 +1,9 @@
 import express from 'express';
-import User from '../models/User';
+import { signup, login } from '../controllers/authController.js';
 
 const router = express.Router();
 
-router.post('/signup', async (req, res) => {
-  try {
-    const { name, email, password } = req.body;
-    const user = new User({ name, email, password });
-    await user.save();
-    res.status(201).json({ message: 'User created successfully' });
-  } catch (error) {
-    res.status(500).json({ message: 'Error creating user' });
-  }
-});
+router.post('/signup', signup);
+router.post('/login', login);
 
 export default router;

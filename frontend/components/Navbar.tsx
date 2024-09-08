@@ -24,7 +24,7 @@ const Navbar: React.FC = () => {
               </>
             ) : (
               <>
-                <Link href="/api/auth/signin" className="mr-4">
+                <Link href="/auth/signin" className="mr-4">
                   Sign In
                 </Link>
                 <Link href="/auth/signup">Sign Up</Link>

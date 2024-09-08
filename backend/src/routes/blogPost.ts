@@ -1,11 +1,13 @@
 import express from 'express';
+import { createBlogPost, generateAIBlogPost, getBlogPost, updateBlogPost, deleteBlogPost } from '../controllers/blogPostController.js';
+import { authMiddleware } from '../middleware/auth.js';
 
 const router = express.Router();
 
-// Define your blog post routes here
-// Example:
-// router.get('/', (req, res) => {
-//   res.send('Blog posts');
-// });
+router.post('/', authMiddleware, createBlogPost);
+router.post('/generate', authMiddleware, generateAIBlogPost);
+router.get('/:id', authMiddleware, getBlogPost);
+router.put('/:id', authMiddleware, updateBlogPost);
+router.delete('/:id', authMiddleware, deleteBlogPost);
 
 export default router;

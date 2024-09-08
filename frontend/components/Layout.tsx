@@ -1,16 +1,22 @@
 import React, { ReactNode } from 'react';
-import Navbar from './Navbar';
+import Head from 'next/head';
 
-interface LayoutProps {
+type LayoutProps = {
   children: ReactNode;
-}
+};
 
 const Layout: React.FC<LayoutProps> = ({ children }) => {
   return (
-    <div className="min-h-screen bg-gray-100">
-      <Navbar />
-      <main className="container mx-auto px-4 py-8">{children}</main>
-    </div>
+    <>
+      <Head>
+        <title>AI-Powered Blog Post Generator</title>
+        <meta name="description" content="Generate blog posts with AI assistance" />
+        <link rel="icon" href="/favicon.ico" />
+      </Head>
+      <main className="container mx-auto px-4 py-8">
+        {children}
+      </main>
+    </>
   );
 };
 
