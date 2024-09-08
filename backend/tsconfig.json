@@ -1,0 +1,15 @@
+{
+  "compilerOptions": {
+    "target": "es6",
+    "module": "commonjs",
+    "outDir": "./dist",
+    "rootDir": "./src", // Ensure this includes the src directory
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "types": ["node", "mongoose"]
+  },
+  "include": ["src/**/*"], // Ensure src directory is included
+  "exclude": ["node_modules", "**/*.spec.ts"]
+}
