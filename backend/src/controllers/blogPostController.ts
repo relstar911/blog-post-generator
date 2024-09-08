@@ -1,11 +1,12 @@
 import { Request, Response, NextFunction } from 'express';
 import BlogPost from '../models/BlogPost';
 import { generateBlogPost } from '../services/openaiService';
+import { authMiddleware } from '../middleware/auth.js';
 
 export const createBlogPost = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { title, content } = req.body;
-    const userId = (req.user as any)?.id; // Assuming you have authentication middleware
+    const userId = (req.user as any)?.id;
 
     const blogPost = new BlogPost({
       title,
@@ -68,6 +69,27 @@ export const deleteBlogPost = async (req: Request, res: Response, next: NextFunc
       return res.status(404).json({ message: 'Blog post not found' });
     }
     res.json({ message: 'Blog post deleted successfully' });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const searchBlogPosts = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { q } = req.query;
+    if (typeof q !== 'string') {
+      return res.status(400).json({ message: 'Invalid search query' });
+    }
+
+    const searchResults = await BlogPost.find(
+      { $text: { $search: q } },
+      { score: { $meta: 'textScore' } }
+    )
+      .sort({ score: { $meta: 'textScore' } })
+      .populate('author', 'name')
+      .limit(20);
+
+    res.json(searchResults);
   } catch (error) {
     next(error);
   }

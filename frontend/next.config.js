@@ -1,15 +1,14 @@
-const path = require('path');
+import path from 'path';
+import { fileURLToPath } from 'url';
 
-/** @type {import('next').NextConfig} */
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
 const nextConfig = {
   reactStrictMode: true,
-  env: {
-    NEXT_PUBLIC_API_URL: 'http://localhost:5001/api',
+  sassOptions: {
+    includePaths: [path.join(__dirname, 'styles')],
   },
-  webpack: (config) => {
-    config.resolve.alias['@shared'] = path.resolve(__dirname, '../shared');
-    return config;
-  },
-}
+};
 
-module.exports = nextConfig
+export default nextConfig;

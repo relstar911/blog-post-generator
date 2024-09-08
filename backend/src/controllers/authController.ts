@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import User from '../models/User';
+import { authMiddleware } from '../middleware/auth.js';
 
 export const signup = async (req: Request, res: Response, next: NextFunction) => {
   try {

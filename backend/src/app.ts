@@ -1,13 +1,13 @@
-import dotenv from 'dotenv';
-dotenv.config(); // Ensure this line is at the top
-
 import express from 'express';
 import cors from 'cors';
-import connectDB from './config/database.js'; // Add .js extension
-import authRoutes from './routes/auth.js'; // Add .js extension
-import blogPostRoutes from './routes/blogPost.js'; // Add .js extension
-import inputRoutes from './routes/input.js'; // Add .js extension
-import errorHandler from './middleware/errorHandler.js'; // Add .js extension
+import dotenv from 'dotenv';
+import connectDB from './config/database.js';
+import authRoutes from './routes/auth.js';
+import blogPostRoutes from './routes/blogPost.js';
+import inputRoutes from './routes/input.js';
+import { errorHandler } from './middleware/errorHandler.js';
+
+dotenv.config();
 
 const app = express();
 
@@ -30,11 +30,6 @@ app.use(errorHandler);
 const PORT = process.env.PORT || 5001;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
-});
-
-// Test route
-app.get('/test', (req, res) => {
-  res.json({ message: 'Backend is working!' });
 });
 
 export default app;

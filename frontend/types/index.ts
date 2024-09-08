@@ -5,12 +5,18 @@ export interface User {
 }
 
 export interface BlogPost {
-  id?: string;  // Make id optional for new posts
+  _id: string;
+  id?: string; // Optional, to support both _id and id
   title: string;
   content: string;
-  author?: User;  // Make author optional
-  createdAt?: string;  // Make createdAt optional
-  updatedAt?: string;  // Make updatedAt optional
+  author: {
+    _id: string;
+    id?: string; // Optional, to support both _id and id
+    name: string;
+  };
+  tags?: string[];
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface GeneratedContent {

@@ -1,32 +1,48 @@
+import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
-import { useState, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
+import { useEditor, EditorContent } from '@tiptap/react';
+import StarterKit from '@tiptap/starter-kit';
 import Layout from '../../components/Layout';
-import { useGenerateContent } from '../../hooks/useGenerateContent';
 import api from '../../utils/api';
-import { BlogPost } from '../../types';
+import { useGenerateContent } from '../../hooks/useGenerateContent';
+import TextInput from '../../components/InputMethods/TextInput';
+import URLInput from '../../components/InputMethods/URLInput';
+import PDFInput from '../../components/InputMethods/PDFInput';
 
 const Editor = () => {
   const router = useRouter();
   const { id } = router.query;
   const { data: session } = useSession();
-  const { content: generatedContent, generateContent, isLoading, error } = useGenerateContent();
-  const [post, setPost] = useState<BlogPost>({ title: '', content: '' });
+  const [post, setPost] = useState({ title: '', content: '' });
+  const [inputMethod, setInputMethod] = useState<'text' | 'url' | 'pdf'>('text');
+  const { content, isLoading, error, generateContent } = useGenerateContent();
+
+  const editor = useEditor({
+    extensions: [StarterKit],
+    content: post.content,
+    onUpdate: ({ editor }) => {
+      setPost(prevPost => ({ ...prevPost, content: editor.getHTML() }));
+    },
+  });
 
   useEffect(() => {
     if (id && id !== 'new') {
-      fetchPost();
+      api.get(`/blog-posts/${id}`).then(response => {
+        setPost(response.data);
+        editor?.commands.setContent(response.data.content);
+      }).catch(error => {
+        console.error('Error fetching post:', error);
+      });
     }
-  }, [id]);
+  }, [id, editor]);
 
-  const fetchPost = async () => {
-    try {
-      const response = await api.get(`/blog-posts/${id}`);
-      setPost(response.data);
-    } catch (error) {
-      console.error('Failed to fetch post:', error);
+  useEffect(() => {
+    if (content) {
+      setPost(prevPost => ({ ...prevPost, content }));
+      editor?.commands.setContent(content);
     }
-  };
+  }, [content, editor]);
 
   const handleSave = async () => {
     if (!session) {
@@ -42,17 +58,12 @@ const Editor = () => {
       }
       router.push('/dashboard');
     } catch (error) {
-      console.error('Failed to save post:', error);
+      console.error('Error saving post:', error);
     }
   };
 
-  const handleGenerate = async () => {
-    if (post.title) {
-      await generateContent(post.title);
-      if (!error) {
-        setPost(prevPost => ({ ...prevPost, content: prevPost.content + '\n\n' + generatedContent }));
-      }
-    }
+  const handleInputMethodChange = (method: 'text' | 'url' | 'pdf') => {
+    setInputMethod(method);
   };
 
   if (!session) {
@@ -69,23 +80,35 @@ const Editor = () => {
         placeholder="Post Title"
         className="w-full p-2 mb-4 border rounded"
       />
-      <textarea
-        value={post.content}
-        onChange={(e) => setPost({ ...post, content: e.target.value })}
-        placeholder="Post Content"
-        className="w-full p-2 mb-4 border rounded h-64"
-      />
-      <button 
-        onClick={handleGenerate} 
-        disabled={isLoading || !post.title} 
-        className="bg-blue-500 text-white px-4 py-2 rounded mr-2 disabled:bg-gray-300"
-      >
-        {isLoading ? 'Generating...' : 'Generate Content'}
-      </button>
+      <div className="mb-4">
+        <button
+          onClick={() => handleInputMethodChange('text')}
+          className={`mr-2 ${inputMethod === 'text' ? 'bg-blue-500 text-white' : 'bg-gray-200'} px-4 py-2 rounded`}
+        >
+          Text
+        </button>
+        <button
+          onClick={() => handleInputMethodChange('url')}
+          className={`mr-2 ${inputMethod === 'url' ? 'bg-blue-500 text-white' : 'bg-gray-200'} px-4 py-2 rounded`}
+        >
+          URL
+        </button>
+        <button
+          onClick={() => handleInputMethodChange('pdf')}
+          className={`${inputMethod === 'pdf' ? 'bg-blue-500 text-white' : 'bg-gray-200'} px-4 py-2 rounded`}
+        >
+          PDF
+        </button>
+      </div>
+      {inputMethod === 'text' && <TextInput onContentGenerated={generateContent} />}
+      {inputMethod === 'url' && <URLInput onContentGenerated={generateContent} />}
+      {inputMethod === 'pdf' && <PDFInput onContentGenerated={generateContent} />}
+      <EditorContent editor={editor} className="w-full p-2 mb-4 border rounded min-h-[200px]" />
+      {isLoading && <p className="text-blue-500">Generating content...</p>}
+      {error && <p className="text-red-500">{error}</p>}
       <button onClick={handleSave} className="bg-green-500 text-white px-4 py-2 rounded">
         Save Post
       </button>
-      {error && <p className="text-red-500 mt-2">{error}</p>}
     </Layout>
   );
 };

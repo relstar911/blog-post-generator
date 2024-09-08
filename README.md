@@ -3,20 +3,23 @@
 ## Description
 An AI-powered application that allows users to create, manage, and publish blog posts using AI assistance. Users can sign up, log in, and generate content based on various input methods including text prompts, URLs, and PDF uploads.
 
+## Current Project Status
+This project is currently in active development. The basic structure and many core features are implemented, but some functionalities are still being refined and expanded.
+
 ## Features
-- User registration and authentication
-- AI-generated blog content from multiple input sources:
-  - Text prompts
-  - URL content scraping
-  - PDF document analysis
-- CRUD operations for blog posts
-- User profiles and post management
-- Responsive design with Tailwind CSS
-- Real-time content generation feedback
-- Error handling and loading states
-- Comments section (to be implemented)
-- Search functionality (to be implemented)
-- Analytics dashboard (to be implemented)
+- [x] User registration and authentication (partially implemented)
+- [x] AI-generated blog content from multiple input sources:
+  - [x] Text prompts
+  - [x] URL content scraping
+  - [x] PDF document analysis
+- [x] Basic CRUD operations for blog posts
+- [ ] User profiles and post management (in progress)
+- [x] Responsive design with Tailwind CSS
+- [x] Real-time content generation feedback
+- [x] Error handling and loading states
+- [ ] Comments section (planned)
+- [x] Enhanced PDF parsing capabilities
+- [x] Improved web scraping for URL inputs
 
 ## Tech Stack
 - **Frontend**: Next.js, React, Axios, TypeScript
@@ -24,6 +27,7 @@ An AI-powered application that allows users to create, manage, and publish blog 
 - **Authentication**: JWT, NextAuth
 - **Styling**: Tailwind CSS
 - **AI Integration**: OpenAI API
+- **Testing**: Jest, Supertest (backend only currently)
 
 ## Getting Started
 
@@ -40,10 +44,9 @@ An AI-powered application that allows users to create, manage, and publish blog 
    cd blog-post-generator
    ```
 
-2. Install dependencies for the backend:
+2. Install all dependencies:
    ```bash
-   cd backend
-   npm install
+   npm run install-all
    ```
 
 3. Set up environment variables:
@@ -57,13 +60,14 @@ An AI-powered application that allows users to create, manage, and publish blog 
 
 4. Start the backend server:
    ```bash
+   cd backend
    npm run dev
    ```
 
-5. Install dependencies for the frontend:
+5. In a new terminal, start the frontend development server:
    ```bash
-   cd ../frontend
-   npm install
+   cd frontend
+   npm run dev
    ```
 
 6. Set up environment variables for the frontend:
@@ -74,16 +78,18 @@ An AI-powered application that allows users to create, manage, and publish blog 
      NEXTAUTH_SECRET=your_nextauth_secret
      ```
 
-7. Start the frontend server:
-   ```bash
-   npm run dev
-   ```
-
 ## Usage
 - Navigate to `http://localhost:3000` to access the application.
 - Sign up or log in to start creating blog posts.
 - Use the various input methods (text prompt, URL, PDF upload) to generate content.
 - Edit, save, and manage your blog posts.
+
+## Testing
+To run the backend tests:
+```bash
+cd backend
+npm test
+```
 
 ## Contributing
 Contributions are welcome! Please follow these steps:
@@ -97,3 +103,39 @@ Please ensure your code adheres to the existing style and includes appropriate t
 
 ## License
 This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
+
+## Deployment
+
+### Backend Deployment
+
+1. Build the Docker image:
+   ```bash
+   cd backend
+   docker build -t blog-post-generator-backend .
+   ```
+
+2. Run the Docker container:
+   ```bash
+   docker run -p 5001:5001 -e MONGODB_URI=your_mongodb_uri -e JWT_SECRET=your_jwt_secret -e OPENAI_API_KEY=your_openai_api_key blog-post-generator-backend
+   ```
+
+### Frontend Deployment
+
+1. Build the frontend:
+   ```bash
+   cd frontend
+   npm run build
+   ```
+
+2. Deploy to Vercel:
+   ```bash
+   vercel
+   ```
+
+Follow the prompts to complete the deployment.
+
+## Authors
+
+* **Arda Hüyüktepe** - *AI Powered Blog Post Generator* - [relstar911](https://github.com/relstar911)
+
+See also the list of [contributors](https://github.com/relstar911/blog-post-generator/contributors) who participated in this project.
