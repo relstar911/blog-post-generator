@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
-import BlogPost from '../models/BlogPost';
-import { generateBlogPost } from '../services/openaiService';
+import BlogPost from '../models/BlogPost.js';
+import { generateBlogPost } from '../services/openaiService.js';
 import { authMiddleware } from '../middleware/auth.js';
 
 export const createBlogPost = async (req: Request, res: Response, next: NextFunction) => {

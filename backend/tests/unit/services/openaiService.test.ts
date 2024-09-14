@@ -1,5 +1,7 @@
 import axios from 'axios';
 import { generateBlogPost, extractKeywords } from '../../../src/services/openaiService';
+import { jest } from '@jest/globals';
+import { describe, it, expect } from '@jest/globals'; // Use standard Jest imports
 
 jest.mock('axios');
 
@@ -19,7 +21,7 @@ describe('OpenAI Service', () => {
         },
       };
 
-      (axios.post as jest.Mock).mockResolvedValue(mockResponse);
+      (axios.post as jest.MockedFunction<typeof axios.post>).mockResolvedValue(mockResponse);
 
       const result = await generateBlogPost(prompt);
 
@@ -46,7 +48,7 @@ describe('OpenAI Service', () => {
 
     it('should throw an error if the API call fails', async () => {
       const prompt = 'Test prompt';
-      (axios.post as jest.Mock).mockRejectedValue(new Error('API call failed'));
+      (axios.post as jest.MockedFunction<typeof axios.post>).mockRejectedValue(new Error('API call failed'));
 
       await expect(generateBlogPost(prompt)).rejects.toThrow('Failed to generate blog post');
     });
@@ -67,7 +69,7 @@ describe('OpenAI Service', () => {
         },
       };
 
-      (axios.post as jest.Mock).mockResolvedValue(mockResponse);
+      (axios.post as jest.MockedFunction<typeof axios.post>).mockResolvedValue(mockResponse);
 
       const result = await extractKeywords(content);
 

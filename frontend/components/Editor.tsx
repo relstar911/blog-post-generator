@@ -16,6 +16,12 @@ const Editor: React.FC<EditorProps> = ({ initialContent, onSave }) => {
   const editor = useEditor({
     extensions: [StarterKit],
     content: initialContent,
+    editorProps: {
+      attributes: {
+        class: 'prose prose-sm m-5 focus:outline-none',
+      },
+    },
+    immediatelyRender: false, // Add this line
   });
 
   useEffect(() => {

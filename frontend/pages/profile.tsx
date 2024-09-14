@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useSession } from 'next-auth/react';
+import { useRouter } from 'next/router';
 import Layout from '../components/Layout';
 import UserProfile from '../components/UserProfile';
 import api from '../utils/api';
@@ -21,7 +22,13 @@ interface UserData {
 }
 
 const ProfilePage: React.FC = () => {
-  const { data: session, status } = useSession();
+  const router = useRouter();
+  const { data: session, status } = useSession({
+    required: true,
+    onUnauthenticated() {
+      router.push('/auth/signin');
+    },
+  });
   const [userData, setUserData] = useState<UserData | null>(null);
 
   useEffect(() => {
@@ -32,7 +39,7 @@ const ProfilePage: React.FC = () => {
 
   const fetchUserData = async (userId: string) => {
     try {
-      const response = await api.getUserProfile(userId);
+      const response = await api.getUserStatistics(userId);
       setUserData(response.data);
     } catch (error) {
       console.error('Error fetching user data:', error);
@@ -49,34 +56,32 @@ const ProfilePage: React.FC = () => {
 
   return (
     <Layout>
-      <div className="max-w-4xl mx-auto px-4 py-8">
-        <h1 className="text-3xl font-bold mb-8">User Profile</h1>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          <div className="md:col-span-2">
-            {userData && <UserProfile user={userData.user} />}
-          </div>
-          <div className="bg-white shadow rounded-lg p-6">
-            <h2 className="text-xl font-semibold mb-4">User Statistics</h2>
-            {userData ? (
-              <div className="space-y-4">
-                <div className="flex justify-between items-center">
+      <div className="container mx-auto px-4 py-8">
+        <h1 className="text-3xl font-bold mb-6">Your Profile</h1>
+        {userData ? (
+          <div className="bg-white shadow-md rounded-lg p-6">
+            <UserProfile user={userData.user} />
+            <div className="mt-8">
+              <h2 className="text-2xl font-semibold mb-4">Your Statistics</h2>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="flex justify-between items-center p-4 bg-gray-100 rounded">
                   <span className="text-gray-600">Total Posts:</span>
                   <span className="font-semibold">{userData.statistics.postCount}</span>
                 </div>
-                <div className="flex justify-between items-center">
+                <div className="flex justify-between items-center p-4 bg-gray-100 rounded">
                   <span className="text-gray-600">Total Comments:</span>
                   <span className="font-semibold">{userData.statistics.commentCount}</span>
                 </div>
-                <div className="flex justify-between items-center">
+                <div className="flex justify-between items-center p-4 bg-gray-100 rounded">
                   <span className="text-gray-600">Total Likes Received:</span>
                   <span className="font-semibold">{userData.statistics.totalLikes}</span>
                 </div>
               </div>
-            ) : (
-              <p>Loading statistics...</p>
-            )}
+            </div>
           </div>
-        </div>
+        ) : (
+          <p>Loading user data...</p>
+        )}
       </div>
     </Layout>
   );

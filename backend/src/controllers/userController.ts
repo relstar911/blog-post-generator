@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
-import User from '../models/User';
-import BlogPost from '../models/BlogPost';
-import Comment from '../models/Comment';
+import User from '../models/User.js';
+import BlogPost from '../models/BlogPost.js';
+import Comment from '../models/Comment.js';
 
 export const getUserProfile = async (req: Request, res: Response, next: NextFunction) => {
   try {
@@ -20,6 +20,11 @@ export const updateUserProfile = async (req: Request, res: Response, next: NextF
   try {
     const userId = req.params.id;
     const { name, bio, location, website } = req.body;
+
+    // Ensure that only the authenticated user can update their profile
+    if ((req.user as any).id !== userId) {
+      return res.status(403).json({ message: 'Unauthorized' });
+    }
 
     const user = await User.findByIdAndUpdate(
       userId,
@@ -41,24 +46,26 @@ export const getUserStatistics = async (req: Request, res: Response, next: NextF
   try {
     const userId = req.params.id;
 
-    const [user, postCount, commentCount, totalLikes] = await Promise.all([
+    const [user, postCount, commentCount, totalLikesData] = await Promise.all([
       User.findById(userId).select('-password'),
       BlogPost.countDocuments({ author: userId }),
       Comment.countDocuments({ author: userId }),
       BlogPost.aggregate([
         { $match: { author: userId } },
-        { $group: { _id: null, totalLikes: { $sum: '$likes' } } }
-      ])
+        { $group: { _id: null, totalLikes: { $sum: '$likes' } } },
+      ]),
     ]);
 
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }
 
+    const totalLikes = totalLikesData[0]?.totalLikes || 0;
+
     const statistics = {
       postCount,
       commentCount,
-      totalLikes: totalLikes[0]?.totalLikes || 0
+      totalLikes,
     };
 
     res.json({ user, statistics });

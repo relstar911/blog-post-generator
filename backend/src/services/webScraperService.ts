@@ -3,6 +3,8 @@ import * as cheerio from 'cheerio';
 import { JSDOM } from 'jsdom';
 import * as Readability from '@mozilla/readability';
 
+// Remove the static import of pdf-parse if it exists
+
 interface ScrapedContent {
   title: string;
   content: string;
@@ -10,6 +12,9 @@ interface ScrapedContent {
 }
 
 export async function scrapeWebsite(url: string): Promise<ScrapedContent> {
+  // Dynamically import pdf-parse only when needed
+  const pdfParse = await import('pdf-parse').then(module => module.default);
+  
   try {
     const response = await axios.get(url, {
       headers: {

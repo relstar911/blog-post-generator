@@ -1,11 +1,12 @@
 import React from 'react';
 import { AppProps } from 'next/app';
 import { useRouter } from 'next/router';
-import ErrorBoundary from '@/components/ErrorBoundary';
-import LoadingIndicator from '@/components/LoadingIndicator';
+import ErrorBoundary from '../components/ErrorBoundary';
+import LoadingIndicator from '../components/LoadingIndicator';
 import '../styles/globals.css';
+import { SessionProvider } from "next-auth/react";
 
-function MyApp({ Component, pageProps }: AppProps) {
+function MyApp({ Component, pageProps: { session, ...pageProps } }: AppProps) {
   const router = useRouter();
   const [isLoading, setIsLoading] = React.useState(false);
 
@@ -25,10 +26,12 @@ function MyApp({ Component, pageProps }: AppProps) {
   }, [router]);
 
   return (
-    <ErrorBoundary>
-      {isLoading && <LoadingIndicator />}
-      <Component {...pageProps} />
-    </ErrorBoundary>
+    <SessionProvider session={session}>
+      <ErrorBoundary>
+        {isLoading && <LoadingIndicator />}
+        <Component {...pageProps} />
+      </ErrorBoundary>
+    </SessionProvider>
   );
 }
 

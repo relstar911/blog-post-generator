@@ -3,7 +3,7 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Your other custom styles using @apply */
+/* Your custom styles here */
 
 
 /* Your other global styles */
@@ -42,7 +42,7 @@ a {
   }
 
   .btn-secondary {
-    @apply btn bg-gray-300 text-gray-800 hover:bg-gray-400;
+    @apply btn bg-secondary text-white hover:bg-secondary-dark;
   }
 
   .card {
@@ -135,8 +135,9 @@ a {
 }
 
 .file-input-wrapper .btn {
-  @apply btn btn-secondary;
+  @apply px-4 py-2 font-semibold text-white bg-secondary rounded-lg shadow-md hover:bg-secondary-dark focus:outline-none focus:ring-2 focus:ring-secondary focus:ring-opacity-75;
 }
+
 /* Add more custom styles as needed */
 .custom-style {
   @apply bg-blue-200 text-gray-800 p-4 rounded;

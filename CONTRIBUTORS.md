@@ -41,7 +41,8 @@ This project is licensed under the MIT License. See the [LICENSE](LICENSE) file 
 
 Follow the prompts to complete the deployment.
 
-# Contributors
+## Authors
 
-* **Arda Hüyüktepe** - *Initial work* - [relstar911](https://github.com/relstar911)
-* **Contributor Name** - *Feature X* - [ContributorUsername](https://github.com/ContributorUsername)
+* **Arda Hüyüktepe** - *AI Powered Blog Post Generator* - [relstar911](https://github.com/relstar911)
+
+See also the list of [contributors](https://github.com/relstar911/blog-post-generator/contributors) who participated in this project.

@@ -1,7 +1,7 @@
 import express from 'express';
-import { createBlogPost, generateAIBlogPost, getBlogPost, updateBlogPost, deleteBlogPost } from '../controllers/blogPostController';
-import { searchBlogPosts, searchBlogPostsByTag, searchBlogPostsByAuthor } from '../controllers/searchController';
-import { authMiddleware } from '../middleware/auth';
+import { createBlogPost, generateAIBlogPost, getBlogPost, updateBlogPost, deleteBlogPost } from '../controllers/blogPostController.js';
+import { searchBlogPosts, searchBlogPostsByTag, searchBlogPostsByAuthor } from '../controllers/searchController.js';
+import { authMiddleware } from '../middleware/auth.js';
 
 const router = express.Router();
 

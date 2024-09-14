@@ -22,3 +22,12 @@ export interface BlogPost {
 export interface GeneratedContent {
   content: string;
 }
+
+// If you have a separate types file, update it there. Otherwise, add this to your [id].tsx file.
+
+export interface GenerateContentParams {
+  prompt: string;
+  keywords?: string[];
+  title?: string;  // Add this line
+  // ... any other properties
+}

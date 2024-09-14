@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
-import { scrapeWebsite } from '../services/webScraperService';
-import { generateBlogPost, extractKeywords } from '../services/openaiService';
-import { parsePDF } from '../services/pdfParseService';
+import { scrapeWebsite } from '../services/webScraperService.js';
+import { generateBlogPost, extractKeywords } from '../services/openaiService.js';
+import { parsePDF } from '../services/pdfParseService.js';
 import * as fs from 'fs';
 
 export const processUrlInput = async (req: Request, res: Response, next: NextFunction) => {

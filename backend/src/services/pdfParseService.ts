@@ -1,62 +1,17 @@
-import fs from 'fs';
-import pdf from 'pdf-parse';
+import { PDFExtract } from 'pdf.js-extract';
 
-interface PDFContent {
-  text: string;
-  metadata: {
-    title?: string;
-    author?: string;
-    subject?: string;
-    keywords?: string;
-    creationDate?: Date;
-    modificationDate?: Date;
-  };
-  numpages: number;
-}
+export async function parsePDF(filePath: string): Promise<{ text: string; metadata: any; numpages: number }> {
+  const pdfExtract = new PDFExtract();
+  const options = {}; // specify any options here
 
-interface ExtendedOptions extends pdf.Options {
-  includeFormData?: boolean;
-}
-
-export async function parsePDF(filePath: string): Promise<PDFContent> {
   try {
-    const dataBuffer = fs.readFileSync(filePath);
-    const options: ExtendedOptions = {
-      // Increase max pages to parse if needed
-      max: 0,
-      // Enable parsing form fields
-      includeFormData: true,
-    };
+    const data = await pdfExtract.extract(filePath, options);
+    
+    const text = data.pages.map(page => page.content.map(item => item.str).join(' ')).join('\n');
+    const metadata = data.meta;
+    const numpages = data.pages.length;
 
-    const data = await pdf(dataBuffer, options as pdf.Options);
-
-    // Extract text content
-    let text = data.text;
-
-    // Handle potential OCR content
-    if (text.trim().length === 0) {
-      console.warn('No text content found. The PDF might be scanned or contain images only.');
-      text = 'This PDF appears to be scanned or contain only images. Please provide a text-based PDF for better results.';
-    }
-
-    // Extract metadata
-    const metadata = {
-      title: data.info.Title,
-      author: data.info.Author,
-      subject: data.info.Subject,
-      keywords: data.info.Keywords,
-      creationDate: data.info.CreationDate ? new Date(data.info.CreationDate) : undefined,
-      modificationDate: data.info.ModDate ? new Date(data.info.ModDate) : undefined,
-    };
-
-    // Clean up the text content
-    text = cleanPDFText(text);
-
-    return {
-      text,
-      metadata,
-      numpages: data.numpages,
-    };
+    return { text, metadata, numpages };
   } catch (error) {
     console.error('Error parsing PDF:', error);
     throw new Error('Failed to parse PDF');

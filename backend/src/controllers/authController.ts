@@ -1,20 +1,22 @@
-import { Request, Response, NextFunction } from 'express';
+import { NextFunction, Request, Response } from 'express';
 import bcrypt from 'bcryptjs';
-import jwt from 'jsonwebtoken';
+import jwt from 'jsonwebtoken';  // This import is correct
 import User from '../models/User';
-import { authMiddleware } from '../middleware/auth.js';
 
-export const signup = async (req: Request, res: Response, next: NextFunction) => {
+export const signup = async (req: Request, res: Response) => {
   try {
     const { name, email, password } = req.body;
 
+    // Check if user already exists
     const existingUser = await User.findOne({ email });
     if (existingUser) {
       return res.status(400).json({ message: 'User already exists' });
     }
 
+    // Hash password
     const hashedPassword = await bcrypt.hash(password, 12);
 
+    // Create new user
     const user = new User({
       name,
       email,
@@ -23,18 +25,18 @@ export const signup = async (req: Request, res: Response, next: NextFunction) =>
 
     await user.save();
 
-    const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET as string, { expiresIn: '1h' });
-
-    res.status(201).json({ message: 'User created successfully', userId: user._id, token });
+    res.status(201).json({ message: 'User created successfully', userId: user._id });
   } catch (error) {
-    next(error);
+    console.error('Signup error:', error);
+    res.status(500).json({ message: 'Error creating user' });
   }
 };
 
-export const login = async (req: Request, res: Response, next: NextFunction) => {
+export const login = async (req: Request, res: Response) => {
   try {
     const { email, password } = req.body;
-
+    // ... authentication logic
+    // If authentication is successful:
     const user = await User.findOne({ email });
     if (!user) {
       return res.status(401).json({ message: 'Authentication failed' });
@@ -47,9 +49,17 @@ export const login = async (req: Request, res: Response, next: NextFunction) => 
 
     const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET as string, { expiresIn: '1h' });
 
-    res.json({ userId: user._id, token });
+    res.json({ 
+      user: { 
+        id: user._id, 
+        name: user.name, 
+        email: user.email 
+      }, 
+      token 
+    });
   } catch (error) {
-    next(error);
+    console.error('Login error:', error);
+    res.status(500).json({ message: 'Error during login' });
   }
 };
 

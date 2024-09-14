@@ -8,9 +8,14 @@ interface GenerateContentResult {
   error: string | null;
 }
 
-interface GenerateContentParams {
+export interface GenerateContentParams {
   type: 'text' | 'url' | 'pdf';
   input: string | FormData;
+  title?: string;
+  keywords?: string[];
+  sourceUrl?: string;
+  metadata?: any;
+  pageCount?: number;
   onUploadProgress?: (progressEvent: AxiosProgressEvent) => void;
 }
 
@@ -21,18 +26,24 @@ export const useGenerateContent = () => {
     error: null,
   });
 
-  const generateContent = async ({ type, input, onUploadProgress }: GenerateContentParams) => {
+  const generateContent = async ({ type, input, title, keywords, sourceUrl, metadata, pageCount, onUploadProgress }: GenerateContentParams) => {
     setResult({ content: '', isLoading: true, error: null });
     try {
       let response;
       switch (type) {
         case 'text':
-          response = await api.post('/blog-posts/generate', { prompt: input });
+          response = await api.post('/blog-posts/generate', { prompt: input, title, keywords });
           break;
         case 'url':
-          response = await api.post('/input/url', { url: input });
+          response = await api.post('/input/url', { url: input, title, keywords, sourceUrl });
           break;
         case 'pdf':
+          if (input instanceof FormData) {
+            input.append('title', title || '');
+            input.append('keywords', JSON.stringify(keywords || []));
+            if (metadata) input.append('metadata', JSON.stringify(metadata));
+            if (pageCount) input.append('pageCount', pageCount.toString());
+          }
           response = await api.post('/input/pdf', input, {
             headers: { 'Content-Type': 'multipart/form-data' },
             onUploadProgress,

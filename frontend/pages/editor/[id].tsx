@@ -9,11 +9,17 @@ import { useGenerateContent } from '../../hooks/useGenerateContent';
 import TextInput from '../../components/InputMethods/TextInput';
 import URLInput from '../../components/InputMethods/URLInput';
 import PDFInput from '../../components/InputMethods/PDFInput';
+import dynamic from 'next/dynamic';
+
+const DynamicTiptapEditor = dynamic(() => import('../../components/TiptapEditor'), {
+  ssr: false,
+  loading: () => <p>Loading editor...</p>,
+});
 
 const Editor = () => {
   const router = useRouter();
   const { id } = router.query;
-  const { data: session } = useSession();
+  const { data: session, status } = useSession();
   const [post, setPost] = useState({ title: '', content: '' });
   const [inputMethod, setInputMethod] = useState<'text' | 'url' | 'pdf'>('text');
   const { content, isLoading, error, generateContent } = useGenerateContent();
@@ -100,10 +106,13 @@ const Editor = () => {
           PDF
         </button>
       </div>
-      {inputMethod === 'text' && <TextInput onContentGenerated={generateContent} />}
-      {inputMethod === 'url' && <URLInput onContentGenerated={generateContent} />}
-      {inputMethod === 'pdf' && <PDFInput onContentGenerated={generateContent} />}
-      <EditorContent editor={editor} className="w-full p-2 mb-4 border rounded min-h-[200px]" />
+      {inputMethod === 'text' && <TextInput onContentGenerated={(content) => generateContent({ type: 'text', input: content })} />}
+      {inputMethod === 'url' && <URLInput onContentGenerated={(content, title, sourceUrl) => generateContent({ type: 'url', input: content, title, sourceUrl })} />}
+      {inputMethod === 'pdf' && <PDFInput onContentGenerated={(content, title, metadata, pageCount) => generateContent({ type: 'pdf', input: content, title, metadata, pageCount })} />}
+      <DynamicTiptapEditor
+       content ={post.content}
+        onUpdate={(newContent: string) => setPost(prevPost => ({ ...prevPost, content: newContent }))}
+      />
       {isLoading && <p className="text-blue-500">Generating content...</p>}
       {error && <p className="text-red-500">{error}</p>}
       <button onClick={handleSave} className="bg-green-500 text-white px-4 py-2 rounded">

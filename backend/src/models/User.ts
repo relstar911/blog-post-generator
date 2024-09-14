@@ -10,12 +10,14 @@ export interface IUser extends Document {
 }
 
 const UserSchema: Schema = new Schema({
-  email: { type: String, required: true, unique: true },
+  email: { type: String, required: true, unique: true, lowercase: true },
   password: { type: String, required: true },
   name: { type: String, required: true },
-  bio: { type: String },
-  location: { type: String },
-  website: { type: String },
+  bio: { type: String, default: '' },
+  location: { type: String, default: '' },
+  website: { type: String, default: '' },
 });
+
+// Add pre-save hooks or methods if needed
 
 export default mongoose.model<IUser>('User', UserSchema);

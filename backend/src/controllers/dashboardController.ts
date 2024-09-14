@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
-import BlogPost from '../models/BlogPost';
-import Comment from '../models/Comment';
-import PostView from '../models/PostView';
+import BlogPost from '../models/BlogPost.js';
+import Comment from '../models/Comment.js';
+import PostView from '../models/PostView.js';
 
 export const getDashboardData = async (req: Request, res: Response, next: NextFunction) => {
   try {

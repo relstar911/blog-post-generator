@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import BlogPost from '../models/BlogPost';
+import BlogPost from '../models/BlogPost.js';
 
 export const searchBlogPosts = async (req: Request, res: Response, next: NextFunction) => {
   try {

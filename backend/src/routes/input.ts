@@ -1,6 +1,6 @@
 import express from 'express';
-import { processUrlInput, processTextInput, processPDFInput } from '../controllers/inputController';
-import { authMiddleware } from '../middleware/auth';
+import { processUrlInput, processTextInput, processPDFInput } from '../controllers/inputController.js';
+import { authMiddleware } from '../middleware/auth.js';
 import multer from 'multer';
 
 const router = express.Router();

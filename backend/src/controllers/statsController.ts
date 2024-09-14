@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
-import BlogPost from '../models/BlogPost';
-import Comment from '../models/Comment';
+import BlogPost from '../models/BlogPost.js';
+import Comment from '../models/Comment.js';
 
 export const getUserStats = async (req: Request, res: Response, next: NextFunction) => {
   try {

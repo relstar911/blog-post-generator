@@ -58,19 +58,12 @@ This project is currently in active development. The basic structure and many co
      OPENAI_API_KEY=your_openai_api_key
      ```
 
-4. Start the backend server:
+4. Start the development servers:
    ```bash
-   cd backend
    npm run dev
    ```
 
-5. In a new terminal, start the frontend development server:
-   ```bash
-   cd frontend
-   npm run dev
-   ```
-
-6. Set up environment variables for the frontend:
+5. Set up environment variables for the frontend:
    - Create a `.env.local` file in the `frontend` directory and add:
      ```
      NEXT_PUBLIC_API_URL=http://localhost:5001/api
